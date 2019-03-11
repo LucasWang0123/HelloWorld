@@ -363,9 +363,9 @@ UefiMain (
    Print(L"Status = %r\n", Status);     
 
 */
-/*	UINT32 Index;
+/*  UINT32 Index;
   UINT32 i,j;
-	EFI_STATUS                 Status;
+  EFI_STATUS                 Status;
 //  EFI_USB2_HC_PROTOCOL       *Usb2HCProtocol;
   EFI_DEVICE_PATH_PROTOCOL   *RemainingDevicePath;
   EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *ConOut;
@@ -385,7 +385,7 @@ UefiMain (
   Line = AllocateZeroPool (100 * sizeof (CHAR16));
   i = 0;
   j = 0;
-	Index = 0;
+  Index = 0;
   BufferSize = 0;
   HandleBuffer = NULL;
 //  Columns = 0;
