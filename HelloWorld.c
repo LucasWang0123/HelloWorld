@@ -260,8 +260,8 @@ UefiMain (
   return EFI_SUCCESS;
 }
 
- /* 
- #define Lucas 100
+/* 
+#define Lucas 100
 EFI_STATUS
 EFIAPI
 UefiMain (

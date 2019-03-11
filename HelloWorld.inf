@@ -48,14 +48,14 @@
   $(SCT_MODULE_SYSTEM)/PhMdeLibPkg/PhMdeLibPkg.dec
 
 [LibraryClasses]
-#  UefiApplicationEntryPoint
+  UefiApplicationEntryPoint
   UefiBootServicesTableLib
   UefiRuntimeServicesTableLib
   UefiLib
   PcdLib
   IoAccessLib
   MemoryAllocationLib
-  UefiDriverEntryPoint
+#  UefiDriverEntryPoint
 
 [Protocols]
   gEfiUsbIoProtocolGuid
