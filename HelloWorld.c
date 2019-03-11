@@ -1,18 +1,3 @@
-/** @file
-  This sample application bases on HelloWorld PCD setting 
-  to print "UEFI Hello World!" to the UEFI Console.
-
-  Copyright (c) 2006 - 2016, Intel Corporation. All rights reserved.<BR>
-  This program and the accompanying materials                          
-  are licensed and made available under the terms and conditions of the BSD License         
-  which accompanies this distribution.  The full text of the license may be found at        
-  http://opensource.org/licenses/bsd-license.php                                            
-
-  THE PROGRAM IS DISTRIBUTED UNDER THE BSD LICENSE ON AN "AS IS" BASIS,                     
-  WITHOUT WARRANTIES OR REPRESENTATIONS OF ANY KIND, EITHER EXPRESS OR IMPLIED.             
-
-**/
-
 #include <Uefi.h>
 #include <Library/PcdLib.h>
 #include <Library/UefiLib.h>
@@ -39,7 +24,7 @@
   { 0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C } }
 
 #define SCT_BDS_SERVICES_PROTOCOL_GUID \
-    { 0xb7646a4, 0x6b44, 0x4332, 0x85, 0x88, 0xc8, 0x99, 0x81, 0x17, 0xf2, 0xef }
+  { 0xb7646a4, 0x6b44, 0x4332, 0x85, 0x88, 0xc8, 0x99, 0x81, 0x17, 0xf2, 0xef }
 
 typedef CHAR8 * PCHAR8;                 // pointer to an 8-bit character.
 typedef CHAR16 * PCHAR16;                // pointer to a 16-bit character.
@@ -159,9 +144,7 @@ typedef struct {
   UINT16 C;
   CHAR8 D;
 } DATA2;
-
 #pragma pack()
-
 
 VOID
 DumpBuffer (
@@ -221,7 +204,6 @@ DumpBuffer (
   @retval other             Some error occurs when executing this entry point.
 
 **/
-#define Lucas 100
 EFI_STATUS
 EFIAPI
 UefiMain (
@@ -275,11 +257,11 @@ UefiMain (
   // Option->Description = AllocateCopyPool (DescriptionLength, p);
   // Print(L"Option->Description = %s\n", Option->Description);
 
-
   return EFI_SUCCESS;
 }
 
  /* 
+ #define Lucas 100
 EFI_STATUS
 EFIAPI
 UefiMain (
