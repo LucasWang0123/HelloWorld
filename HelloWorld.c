@@ -204,6 +204,10 @@ DumpBuffer (
   @retval other             Some error occurs when executing this entry point.
 
 **/
+
+
+
+#define Lucas 100
 EFI_STATUS
 EFIAPI
 UefiMain (
@@ -211,66 +215,8 @@ UefiMain (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
-//  EFI_GUID gEfiGlobalVariableGuid = EFI_GLOBAL_VARIABLE;
-  EFI_GUID gSctBdsServicesProtocolGuid = SCT_BDS_SERVICES_PROTOCOL_GUID;
-//  CHAR16 VariableName [12] =  L"BootOrderDefault"; 
-  UINT32 TempAttributes;
-  UINTN TempDataSize;
-  VOID *TempData;
-  PLOAD_OPTION_OBJECT Option;
-//  PUINT8 p;
-//  UINTN DescriptionLength;
-
-  Option = AllocateZeroPool (sizeof (LOAD_OPTION_OBJECT));
-//  VariableName =  L"Boot0011";
-  TempDataSize = 0;
-  TempData = NULL;
-
-  Status = gBS->AllocatePool (EfiBootServicesData, TempDataSize, &TempData);
-  TempDataSize = 50;
-  Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-
-  Print(L"Status = %r After gRT->GetVariable\n", Status);
-
-  if (TempDataSize > 0) {
-    Status = gBS->AllocatePool (EfiBootServicesData, TempDataSize, &TempData);
-    Print(L"TempDataSize = %d\n", TempDataSize);
-    Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-  }
-
-  // p = TempData;
-  // p += sizeof (UINT32);
-  // p += sizeof (UINT16);
-  // DescriptionLength = StrSize ((PCHAR16)p);
-  // Print(L"DescriptionLength = %d\n", DescriptionLength);
-  // Option->Description = AllocateCopyPool (DescriptionLength, p);
-  // Print(L"Option->Description = %s\n", Option->Description);
-
-  return EFI_SUCCESS;
-}
-
- /* 
- #define Lucas 100
-EFI_STATUS
-EFIAPI
-UefiMain (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
-  )
-{
-     DEBUG ((DEBUG_INFO, "start 0220 Lucas = %d\n", Lucas));
-   if(0){
+  DEBUG ((DEBUG_INFO, "start 0220 Lucas = %d\n", Lucas));
+  if(0){
     #undef Lucas
     #define Lucas           1000000  ///< 1sec timeout in microseconds
   }
@@ -494,5 +440,5 @@ UefiMain (
   //  }
 
  // gBS->FreePool (HandleBuffer);
-//  return EFI_SUCCESS;
-//}
+  return EFI_SUCCESS;
+}
