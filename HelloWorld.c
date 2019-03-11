@@ -211,81 +211,10 @@ UefiMain (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
-//  EFI_GUID gEfiGlobalVariableGuid = EFI_GLOBAL_VARIABLE;
-  EFI_GUID gSctBdsServicesProtocolGuid = SCT_BDS_SERVICES_PROTOCOL_GUID;
-//  CHAR16 VariableName [12] =  L"BootOrderDefault"; 
-  UINT32 TempAttributes;
-  UINTN TempDataSize;
-  VOID *TempData;
-  PLOAD_OPTION_OBJECT Option;
-//  PUINT8 p;
-//  UINTN DescriptionLength;
 
-  Option = AllocateZeroPool (sizeof (LOAD_OPTION_OBJECT));
-//  VariableName =  L"Boot0011";
-  TempDataSize = 0;
-  TempData = NULL;
-
-  Status = gBS->AllocatePool (EfiBootServicesData, TempDataSize, &TempData);
-  TempDataSize = 50;
-  Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-
-  Print(L"Status = %r After gRT->GetVariable\n", Status);
-
-  if (TempDataSize > 0) {
-    Status = gBS->AllocatePool (EfiBootServicesData, TempDataSize, &TempData);
-    Print(L"TempDataSize = %d\n", TempDataSize);
-    Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-  }
-
-  // p = TempData;
-  // p += sizeof (UINT32);
-  // p += sizeof (UINT16);
-  // DescriptionLength = StrSize ((PCHAR16)p);
-  // Print(L"DescriptionLength = %d\n", DescriptionLength);
-  // Option->Description = AllocateCopyPool (DescriptionLength, p);
-  // Print(L"Option->Description = %s\n", Option->Description);
-
-  return EFI_SUCCESS;
-}
-
-/* 
-#define Lucas 100
-EFI_STATUS
-EFIAPI
-UefiMain (
-  IN EFI_HANDLE        ImageHandle,
-  IN EFI_SYSTEM_TABLE  *SystemTable
-  )
-{
-     DEBUG ((DEBUG_INFO, "start 0220 Lucas = %d\n", Lucas));
-   if(0){
-    #undef Lucas
-    #define Lucas           1000000  ///< 1sec timeout in microseconds
-  }
-  DEBUG ((DEBUG_INFO, "end 0220 Lucas = %d\n", Lucas));
 /*  EFI_STATUS               Status;
   DATA                     *Lucas;
-  Status = gBS->AllocatePool(EfiLoaderData, 0xC, (void **)&Lucas); 
-  if (Status != EFI_SUCCESS) { 
-      Print(L"ERROR: Failed to allocate pool for memory map\n"); 
-      return Status; 
-  } 
-
-  Print(L"       GetVariable            @[0x%x] %d\n",gRT->GetVariable , sizeof(int) );
-  gRT->GetVariable = (EFI_GET_VARIABLE)((UINT64)0x760bc9e0);
-  Print(L"       GetVariable            @[0x%x]\n",gRT->GetVariable);
+  Status = gBS->AllocatePool(EfiLoaderData, 0xC, (void **)&Lucas);
   
   Lucas->A = 0x5555;
   Lucas->B = 0x6666;
@@ -294,11 +223,7 @@ UefiMain (
   Print(L"=> 0x%x\n", *((UINT8 *)((UINTN)(0xFE00DA26))));
   Print(L"sizeof(UINTN) = 0x%x\n", sizeof(UINTN));
 
-#define OPTION_PLANAR_ID_SUPPORT 1
-#if OPTION_PLANAR_ID_SUPPORT
-  Print(L"Address value = 0x%x\n", (Mmio8 ((UINTN)(CONFIG_FCH_MMIO_BASE + 0x1500 + (11 << 2) + 2))));
-#endif*/  
-/*  Print(L"=> 0x%x \n", &Lucas);
+  Print(L"=> 0x%x \n", &Lucas);
   Print(L"=> 0x%x \n", Lucas);
   Print(L"=> 0x%x\n", ((DATA *) Lucas)->A);
   Print(L"=> 0x%x\n", ((DATA *) Lucas)->B);  
@@ -308,8 +233,6 @@ UefiMain (
   Print(L"=> 0x%x\n", &(((DATA *) Lucas)->B));
   Print(L"=> 0x%x\n", &(((DATA *) Lucas)->C));
   Print(L"=> 0x%x\n", &(((DATA *) Lucas)->D));
-
-  
 
   Print(L"sizeof(DATA) => 0x%x\n", sizeof(DATA));
 
@@ -322,9 +245,9 @@ UefiMain (
   Print(L"=> 0x%x\n", &(((DATA2 *) Lucas)->C));
   Print(L"=> 0x%x\n", &(((DATA2 *) Lucas)->D));
   Print(L"sizeof(DATA2) => 0x%x\n", sizeof(DATA2));
-*/
-//  gBS->FreePool (Lucas);
 
+  gBS->FreePool (Lucas);
+*/
 /*
   int *aaa;
   char *bbb;
@@ -334,24 +257,24 @@ UefiMain (
   DEBUG ((EFI_D_INFO, "sizeof(aaa) = %d  aaa = 0x%016lx aaa = 0x%016llx aaa = 0x%x aaa = %d \n", sizeof(int *), sizeof(*aaa), aaa, *aaa, *aaa));  
   DEBUG ((EFI_D_INFO, "sizeof(bbb) = %d  bbb = 0x%016lx bbb = 0x%016llx bbb = 0x%x bbb = %d \n", sizeof(*bbb), bbb, bbb, *bbb, *bbb));    
 
-/*  EFI_CPU_ARCH_PROTOCOL   *CpuArch;
+  EFI_CPU_ARCH_PROTOCOL   *CpuArch;
   EFI_STATUS               Status;
-//  UINTN                    *map_buf;
-//  UINTN                    map_size;
+  UINTN                    *map_buf;
+  UINTN                    map_size;
 
   Status = gBS->LocateProtocol (&gEfiCpuArchProtocolGuid, NULL, (VOID **) &CpuArch);
 
-/*
-    map_size = sizeof(*map_buf) * 31; 
-  
-   Print(L"sizeof(*map_buf)*31 = %d\n", map_size);
-    Status = gBS->AllocatePool(EfiLoaderData, map_size, (void **)&map_buf); 
-    if (Status != EFI_SUCCESS) { 
-        Print(L"ERROR: Failed to allocate pool for memory map\n"); 
-        return Status; 
-    } 
 
-    Print(L"Status = %r  map_buf = 0x%llx\n", Status, map_buf); 
+  map_size = sizeof(*map_buf) * 31;   
+  Print(L"sizeof(*map_buf)*31 = %d\n", map_size);
+
+  Status = gBS->AllocatePool(EfiLoaderData, map_size, (void **)&map_buf); 
+  if (Status != EFI_SUCCESS) { 
+      Print(L"ERROR: Failed to allocate pool for memory map\n"); 
+      return Status; 
+  } 
+
+  Print(L"Status = %r  map_buf = 0x%llx\n", Status, map_buf); 
  */
 
 /*   Status = CpuArch->SetMemoryAttributes (
@@ -361,117 +284,65 @@ UefiMain (
                       EFI_MEMORY_WC
                       );
    Print(L"Status = %r\n", Status);     
-
 */
-/*  UINT32 Index;
-  UINT32 i,j;
+
+  UINT32 i;
   EFI_STATUS                 Status;
 //  EFI_USB2_HC_PROTOCOL       *Usb2HCProtocol;
-  EFI_DEVICE_PATH_PROTOCOL   *RemainingDevicePath;
-  EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL  *ConOut;
-/*  EFI_GRAPHICS_OUTPUT_PROTOCOL  *GraphicsOutput;
-  EFI_GRAPHICS_OUTPUT_BLT_PIXEL BltBuffer[5] = {{0x30, 0x30, 0x30, 0},
-                                                {0x30, 0x00, 0x00, 0},
-                                                {0x00, 0x30, 0x00, 0},
-                                                {0x00, 0x00, 0x30, 0},
-                                                {0x30, 0x30, 0x30, 0}};*/
-/*  UINTN                      BufferSize;
+//  EFI_DEVICE_PATH_PROTOCOL   *RemainingDevicePath;
+  EFI_DEVICE_PATH_PROTOCOL   *DevicePathProtocol;
+  EFI_PCI_IO_PROTOCOL        PciIoProtocol;
+
+  UINTN                      BufferSize;
   EFI_HANDLE                 *HandleBuffer;
 //  EFI_HANDLE                 Device;
   UINTN                      NumberOfHandles;
-  CHAR16                      *Line;//Lucas DEBUG
-//  UINTN                      Columns;
-//  UINTN                      Rows;
-  Line = AllocateZeroPool (100 * sizeof (CHAR16));
+//  CHAR16                     *Line;  //Lucas DEBUG
+
+//  Line = AllocateZeroPool (100 * sizeof (CHAR16));
   i = 0;
-  j = 0;
-  Index = 0;
   BufferSize = 0;
   HandleBuffer = NULL;
-//  Columns = 0;
-//  Rows = 0;
-//  Status = gBS->LocateProtocol (&gEfiUsb2HcProtocolGuid, NULL, (VOID**)&UsbIo);
-/*  Status = gBS->LocateHandle (
+
+/*  Status = gBS->LocateProtocol (&gEfiUsb2HcProtocolGuid, NULL, (VOID**)&UsbIo);
+  Status = gBS->LocateHandle (
                     ByProtocol,
                     &gEfiUsb2HcProtocolGuid,
                     NULL,
                     &BufferSize,
                     HandleBuffer);
 
-  if (Status == EFI_BUFFER_TOO_SMALL) {
-    Status = gBS->AllocatePool (
-                EfiBootServicesData,
-                BufferSize,
-                (VOID**)&HandleBuffer);
-//    Print(L"Status = %r  HandleBuffer = 0x%x HandleBuffer[0]=0x%x HandleBuffer[1]=0x%x\n",Status,HandleBuffer,HandleBuffer[0],HandleBuffer[1]);
+    Print(L"Status = %r  HandleBuffer = 0x%x HandleBuffer[0]=0x%x HandleBuffer[1]=0x%x\n",Status,HandleBuffer,HandleBuffer[0],HandleBuffer[1]);
+    
     if (EFI_ERROR (Status)) {
       Print(L"Error.\n");
       return EFI_SUCCESS;
     }
 */
-/*    Status = gBS->LocateHandle (
-                  ByProtocol,
-                  &gEfiUsb2HcProtocolGuid,
-                  NULL,
-                  &BufferSize,
-                  HandleBuffer);
-//    Print(L"Status = %r  HandleBuffer = 0x%x HandleBuffer[0]=0x%x HandleBuffer[1]=0x%x\n",Status,HandleBuffer,HandleBuffer[0],HandleBuffer[1]);
-    if (EFI_ERROR (Status)) {
-      Print(L"Error.\n");
-      return EFI_SUCCESS;
-    }
-  }
-
-  Print(L"Status = %r  Size = %d\n",Status,BufferSize / sizeof (EFI_HANDLE));
-*/
+ 
+//  Print(L"Status = %r  Size = %d\n",Status,BufferSize / sizeof (EFI_HANDLE));
 //  gST->ConOut->ClearScreen (gST->ConOut);
 //  gST->ConOut->SetAttribute (gST->ConOut, EFI_BLUE | EFI_BACKGROUND_BLACK);
-/*  Status = gST->ConOut->QueryMode (
-               gST->ConOut,
-               gST->ConOut->Mode->Mode,
-               &Columns,
-               &Rows);
-  
-  //Rows = Rows - 5;
-  //gST->ConOut->SetCursorPosition (gST->ConOut, 165, Rows);
-//  gST->ConOut->OutputString (gST->ConOut, Columns);
-  //Print(L"Status = %r Columns = %d Rows = %d gST->ConOut->Mode->MaxMode = %d \n", Status, Columns, Rows, gST->ConOut->Mode->Mode);
-*/  
 
-/*  Status = gBS->LocateHandleBuffer (
+  Status = gBS->LocateHandleBuffer (
                    ByProtocol,
-                   &gEfiSimpleTextOutProtocolGuid,
+                   &gEfiPciIoProtocolGuid,
                    NULL,
                    &NumberOfHandles,
                    &HandleBuffer
                    );
 
   Print(L"Status = %r  Size = %d\n",Status,NumberOfHandles);
-
-
-//  Status = gBS->LocateProtocol(&gEfiGraphicsOutputProtocolGuid, NULL, (VOID **) &GraphicsOutput);
-//  Status = GraphicsOutput->Blt(GraphicsOutput, BltBuffer, EfiBltVideoFill, 0, 0, 0, 0, GraphicsOutput->Mode->Info->HorizontalResolution, GraphicsOutput->Mode->Info->VerticalResolution, 0);
   
 
-
   for (i = 0; i < NumberOfHandles; i++) {
-    //Print(L"HandleBuffer[%d] = 0x%x \n",i,HandleBuffer[i]);
-/*    Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiGraphicsOutputProtocolGuid, (VOID**)&GraphicsOutput);
-    Status = GraphicsOutput->Blt(GraphicsOutput, &BltBuffer[i], EfiBltVideoFill, 0, 0, 0, 0, GraphicsOutput->Mode->Info->HorizontalResolution, GraphicsOutput->Mode->Info->VerticalResolution, 0);
-    Print(L"Status = %r\n", Status);
-    Print(L"Current mode =[%d] \n",GraphicsOutput->Mode->Mode);
-    Print(L"Screen Width =[%d] \n",GraphicsOutput->Mode->Info->HorizontalResolution);
-    Print(L"Screen height=[%d] \n",GraphicsOutput->Mode->Info->VerticalResolution);
-    gBS->Stall(5000000);
-/*    if (EFI_ERROR (Status)) {
-      Print(L"Error.\n");
-      return EFI_SUCCESS;
-    }
-*/
-/*    Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiDevicePathProtocolGuid, (VOID**)&RemainingDevicePath);
-    Print(L"%s\n", UiDevicePathToStr(RemainingDevicePath));
-    Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiSimpleTextOutProtocolGuid, (VOID**)&ConOut);
-    DEBUG ((DEBUG_INFO, "0125 Lucas Status = %r  i = %d\n", Status, i));
+    Print(L"HandleBuffer[%d] = 0x%x \n",i,HandleBuffer[i]);
+
+    Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiDevicePathProtocolGuid, (VOID**)&DevicePathProtocol);
+    Print(L"Status = %r  DevicePath = %s\n", Status, UiDevicePathToStr(DevicePathProtocol));
+    Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiPciIoProtocolGuid, (VOID**)&PciIoProtocol);
+    Print(L"Status = %r  \n", Status);
+/*
     if (!EFI_ERROR (Status)) {
       for(j=0 ;j<99 ;j++){
         Line[j] = 0x41;
@@ -479,20 +350,21 @@ UefiMain (
       Line[99] = L'\0';  
       ConOut->OutputString (ConOut, Line);
     }
-    //Print(L"Status = %r\n", Status);
-/*    Status = gBS->LocateDevicePath (
+
+    Status = gBS->LocateDevicePath (
                     &gEfiPciIoProtocolGuid,
                     &RemainingDevicePath,
                     &Device);
     Print(L"Device = 0x%x    %s\n", Device, UiDevicePathToStr(RemainingDevicePath));
-*/
 
-/*    Status = gBS->UninstallProtocolInterface (HandleBuffer [i], &gEfiUsbIoProtocolGuid, UsbIoProtocol);
+    Status = gBS->UninstallProtocolInterface (HandleBuffer [i], &gEfiUsbIoProtocolGuid, UsbIoProtocol);
     if (EFI_ERROR (Status)) {
       Print(L"Error.\n");
-      return EFI_SUCCESS;*/
-  //  }
+      return EFI_SUCCESS;
+    }
+*/
 
- // gBS->FreePool (HandleBuffer);
-//  return EFI_SUCCESS;
-//}
+  }
+  gBS->FreePool (HandleBuffer);
+  return EFI_SUCCESS;
+}
