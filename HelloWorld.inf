@@ -55,6 +55,7 @@
   PcdLib
   IoAccessLib
   MemoryAllocationLib
+#  BaseMemoryLib
 #  UefiDriverEntryPoint
 
 [Protocols]

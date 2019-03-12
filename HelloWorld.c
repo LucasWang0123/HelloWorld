@@ -3,6 +3,7 @@
 #include <Library/UefiLib.h>
 #include <Library/UefiBootServicesTableLib.h>
 #include <Library/MemoryAllocationLib.h>
+#include <Library/BaseMemoryLib.h>
 #include <Library/UefiRuntimeServicesTableLib.h>
 #include <Library/UefiApplicationEntryPoint.h>
 #include <Protocol/UsbIo.h>
@@ -21,7 +22,7 @@
 
 #define CONFIG_FCH_MMIO_BASE                     0xFED80000
 #define EFI_GLOBAL_VARIABLE \
-  { 0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C } }
+  { 0x8BE4DF61, 0x93CA, 0x11d2, {0xAA, 0x0D, 0x00, 0xE0, 0x98, 0x03, 0x2B, 0x8C} }
 
 #define SCT_BDS_SERVICES_PROTOCOL_GUID \
   { 0xb7646a4, 0x6b44, 0x4332, 0x85, 0x88, 0xc8, 0x99, 0x81, 0x17, 0xf2, 0xef }
@@ -37,16 +38,7 @@ typedef struct _LOAD_OPTION_OBJECT {
   #define SCT_BM_INVALID_OPTION_NUMBER ((1 << (sizeof (UINT16) * 8)) - 1)
   #define SCT_BM_MAX_OPTION_NUMBER     ((1 << (sizeof (UINT16) * 8)) - 2)
 
-  //
-  // This field indicates if the option is a Boot or Driver option.
-  // Application is a sub-type of Boot.
-  //
-
   UINTN OptionType;
-
-  //
-  // If want to add more Boot type, please add number to SCT_BM_LO_MAX_TYPE.
-  //
   
   #define SCT_BM_LO_BOOT          0
   #define SCT_BM_LO_KEY           1
@@ -54,14 +46,6 @@ typedef struct _LOAD_OPTION_OBJECT {
   #define SCT_BM_LO_SYSPREP       3  
   #define SCT_BM_LO_MAX_TYPE      4
   
-  //
-  // The following fields mirror the UEFI specified structure for load options.
-  // In the UEFI specification these fields are packed together and require
-  // math to access, especially the later fields. These are unpacked into this
-  // structure for ease of use. The fields are not in the same order as the
-  // specification and additional fields have been added for the lengths of the
-  // array-style fields, FilePathList, Description, OptionalData.
-  //
 
   UINT32 Attributes;
 
@@ -72,9 +56,6 @@ typedef struct _LOAD_OPTION_OBJECT {
   EFI_DEVICE_PATH_PROTOCOL *FilePathList;
   UINTN NumberOfFilePaths;
 
-  //
-  // OptionalDataLength is UINT32 to match ImageInfo->LoadOptionsSize's type.
-  //
 
   UINT32 OptionalDataLength;            // The number of bytes in OptionalData.
   PUINT8 OptionalData;
@@ -157,8 +138,10 @@ DumpBuffer (
   UINT8 cc;
   if (ShowStr != NULL) {
     DEBUG ((EFI_D_ERROR, "Dump %a Address = 0x%x  Size = 0x%x\n", ShowStr, Buffer, Length));
+    Print (L"Dump %a Address = 0x%x  Size = 0x%x\n", ShowStr, Buffer, Length);
   } else {
     DEBUG ((EFI_D_ERROR, "Dump Address = 0x%x  Size = 0x%x\n", Buffer, Length));
+    Print (L"Dump Address = 0x%x  Size = 0x%x\n", Buffer, Length);
   }  
 
   for (ip = 1 ; ip <= Length ; ip += 16) {
@@ -167,8 +150,10 @@ DumpBuffer (
       for (jp = 0 ; jp < 16 ; jp ++) {
         if ((ip + jp) <= Length) {
           DEBUG ((EFI_D_ERROR, "%02x ", Buffer [ip + jp - 1]));
+          Print(L"%02x ", Buffer [ip + jp - 1]);
         } else {
           DEBUG ((EFI_D_ERROR, "   "));
+          Print(L"   ");
         }
       }
       for (jp = 0 ; jp < 16 ; jp ++) {
@@ -176,17 +161,22 @@ DumpBuffer (
           cc = Buffer [ip + jp - 1];
           if (cc >= 0x20 && cc <= 0x7E) {
             DEBUG ((EFI_D_ERROR, "%c", cc));
+            Print (L"%c", cc);
           } else  {
             DEBUG ((EFI_D_ERROR, "."));
+            Print (L".");
           }
         } else {
           DEBUG ((EFI_D_ERROR, "  "));
+          Print(L"  ");
         }
       }
       DEBUG ((EFI_D_ERROR, "\n"));
+      Print(L"\n");
     } else {
       if ((ip % 512) == 1) {
         DEBUG ((EFI_D_ERROR, "%04x: ...\n", (ip - 1)));
+        Print(L"%04x: ...\n", (ip - 1));
       }
     }
   }
@@ -298,6 +288,23 @@ UefiMain (
 //  EFI_HANDLE                 Device;
   UINTN                      NumberOfHandles;
 //  CHAR16                     *Line;  //Lucas DEBUG
+  CHAR8  *String = "HelloWorld comes from";
+  CHAR16 *NewString;
+
+  DumpBuffer ( (CHAR8 *)String, 30 , NULL);
+  
+  NewString = (CHAR16 *)AllocatePool ( 30 * sizeof(CHAR16) );
+  DumpBuffer ( (CHAR8 *)NewString, 30 * sizeof(CHAR16), NULL);
+
+  ZeroMem ( NewString, 30 * sizeof(CHAR16) );
+  DumpBuffer ( (CHAR8 *)NewString, 30 * sizeof(CHAR16), NULL);
+
+  AsciiStrToUnicodeStr(String,NewString);
+  DumpBuffer ( (CHAR8 *)NewString, 30 * sizeof(CHAR16), NULL);
+
+  Print(L"%s\n", String); 
+  Print(L"%s\n", NewString);
+ 
 
 //  Line = AllocateZeroPool (100 * sizeof (CHAR16));
   i = 0;
@@ -336,12 +343,12 @@ UefiMain (
   
 
   for (i = 0; i < NumberOfHandles; i++) {
-    Print(L"HandleBuffer[%d] = 0x%x \n",i,HandleBuffer[i]);
+//    Print(L"HandleBuffer[%d] = 0x%x \n",i,HandleBuffer[i]);
 
     Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiDevicePathProtocolGuid, (VOID**)&DevicePathProtocol);
-    Print(L"Status = %r  DevicePath = %s\n", Status, UiDevicePathToStr(DevicePathProtocol));
+//    Print(L"Status = %r  DevicePath = %s\n", Status, UiDevicePathToStr(DevicePathProtocol));
     Status = gBS->HandleProtocol (HandleBuffer [i], &gEfiPciIoProtocolGuid, (VOID**)&PciIoProtocol);
-    Print(L"Status = %r  \n", Status);
+//    Print(L"Status = %r  \n", Status);
 /*
     if (!EFI_ERROR (Status)) {
       for(j=0 ;j<99 ;j++){
