@@ -202,12 +202,14 @@ UefiMain (
   )
 {
   EFI_STATUS Status;
-  EFI_GUID gEfiGlobalVariableGuid = EFI_GLOBAL_VARIABLE;
-//  EFI_GUID gSctBdsServicesProtocolGuid = SCT_BDS_SERVICES_PROTOCOL_GUID;
+//  EFI_GUID gEfiGlobalVariableGuid = EFI_GLOBAL_VARIABLE;
+  EFI_GUID gSctBdsServicesProtocolGuid = SCT_BDS_SERVICES_PROTOCOL_GUID;
 //  CHAR16 VariableName [12] =  L"BootOrderDefault"; 
   UINT32 TempAttributes;
   UINTN TempDataSize;
   VOID *TempData;
+  UINT8 *TempData8;
+  UINT16 *TempData16;
   PLOAD_OPTION_OBJECT Option;
 //  PUINT8 p;
 //  UINTN DescriptionLength;
@@ -217,8 +219,8 @@ UefiMain (
   TempData = NULL;
 
   Status = gRT->GetVariable (
-                  L"Boot0011",
-                  (EFI_GUID *) &gEfiGlobalVariableGuid,
+                  L"BootOrderDefault",
+                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
                   &TempAttributes,      // OUT Attributes.
                   &TempDataSize,        // IN OUT DataSize.
                   TempData);            // OUT Data.
@@ -232,14 +234,19 @@ UefiMain (
     Print(L"TempData = 0x%x\n", TempData);
     
     Status = gRT->GetVariable (
-                  L"Boot0011",
-                  (EFI_GUID *) &gEfiGlobalVariableGuid,
+                  L"BootOrderDefault",
+                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
                   &TempAttributes,      // OUT Attributes.
                   &TempDataSize,        // IN OUT DataSize.
                   TempData);            // OUT Data.
     Print(L"TempData = 0x%x\n", TempData);   
-
     DumpBuffer ( (UINT8 *)TempData, (UINT32)TempDataSize, NULL);
+
+    TempData8 = TempData;
+    TempData16 = TempData;
+    Print(L"TempData = 0x%x 0x%x\n", TempData8, *TempData8);
+    Print(L"TempData = 0x%x 0x%x\n", TempData8+1, *(TempData8+1));
+    Print(L"TempData = 0x%x 0x%x\n", TempData16+1, *(TempData16+1));     
   }
 
   // p = TempData;
