@@ -211,6 +211,16 @@ UefiMain (
   UINT8 *TempData8;
   UINT16 *TempData16;
   PLOAD_OPTION_OBJECT Option;
+
+  CHAR8  *String = "HelloWorld comes from";
+  CHAR16 *NewString;
+  
+  NewString = (CHAR16 *)AllocatePool ( 30 * sizeof(CHAR16) );
+  AsciiStrToUnicodeStr(String,NewString);
+
+  Print(L"%a\n", String);
+  Print(L"%s\n", String);
+  Print(L"%s\n", NewString);
 //  PUINT8 p;
 //  UINTN DescriptionLength;
 
