@@ -19,6 +19,8 @@
 #include <Protocol/Usb2HostController.h>
 #include <Library/DebugLib.h>
 #include <Library/IoAccessLib.h>
+#include <Library/DevicePathLib.h>
+#include <Hello2.efi.h>
 
 #define CONFIG_FCH_MMIO_BASE                     0xFED80000
 #define EFI_GLOBAL_VARIABLE \
@@ -201,71 +203,63 @@ UefiMain (
   IN EFI_SYSTEM_TABLE  *SystemTable
   )
 {
-  EFI_STATUS Status;
-//  EFI_GUID gEfiGlobalVariableGuid = EFI_GLOBAL_VARIABLE;
-  EFI_GUID gSctBdsServicesProtocolGuid = SCT_BDS_SERVICES_PROTOCOL_GUID;
-//  CHAR16 VariableName [12] =  L"BootOrderDefault"; 
-  UINT32 TempAttributes;
-  UINTN TempDataSize;
-  VOID *TempData;
-  UINT8 *TempData8;
-  UINT16 *TempData16;
-  PLOAD_OPTION_OBJECT Option;
-
-  CHAR8  *String = "HelloWorld comes from";
-  CHAR16 *NewString;
+  EFI_DEVICE_PATH  *DP;
+  EFI_STATUS      Status;
+  EFI_HANDLE      NewHandle;
+  UINTN           ExitDataSizePtr; 
   
-  NewString = (CHAR16 *)AllocatePool ( 30 * sizeof(CHAR16) );
-  AsciiStrToUnicodeStr(String,NewString);
+  DP=FileDevicePath(NULL,L"fso:\\fake.efi");
+//  Print(L"%s\n",ConvertDevicePathToText(DP,TRUE,FALSE));
 
-  Print(L"%a\n", String);
-  Print(L"%s\n", String);
-  Print(L"%s\n", NewString);
-//  PUINT8 p;
-//  UINTN DescriptionLength;
-
-  Option = AllocateZeroPool (sizeof (LOAD_OPTION_OBJECT));
-  TempDataSize = 0;
-  TempData = NULL;
-
-  Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-
-  Print(L"Status = %r After First GetVariable\n", Status);
-
-  if (TempDataSize > 0) {
-    Print(L"TempDataSize = %d TempData = 0x%x\n", TempDataSize, TempData);
-    
-    Status = gBS->AllocatePool (EfiBootServicesData, TempDataSize, &TempData);
-    Print(L"TempData = 0x%x\n", TempData);
-    
-    Status = gRT->GetVariable (
-                  L"BootOrderDefault",
-                  (EFI_GUID *) &gSctBdsServicesProtocolGuid,
-                  &TempAttributes,      // OUT Attributes.
-                  &TempDataSize,        // IN OUT DataSize.
-                  TempData);            // OUT Data.
-    Print(L"TempData = 0x%x\n", TempData);   
-    DumpBuffer ( (UINT8 *)TempData, (UINT32)TempDataSize, NULL);
-
-    TempData8 = TempData;
-    TempData16 = TempData;
-    Print(L"TempData = 0x%x 0x%x\n", TempData8, *TempData8);
-    Print(L"TempData = 0x%x 0x%x\n", TempData8+1, *(TempData8+1));
-    Print(L"TempData = 0x%x 0x%x\n", TempData16+1, *(TempData16+1));     
+  //
+  // Load the image with:
+  // FALSE - not from boot manager and NULL, 0 being not already in memory
+  //
+  Status = gBS->LoadImage(
+                  FALSE,
+                  ImageHandle,
+                  DP,
+                  (VOID*)&Hello2_efi[0],
+                  sizeof(Hello2_efi),
+                  &NewHandle);     
+  if (EFI_ERROR(Status)) {
+          Print(L"Load image Error!\n");
+          return 0;
   }
+  Print(L"Hello2_efi = 0x%x  NewHandle = 0x%x\n", Hello2_efi, NewHandle);
+  DumpBuffer ( (UINT8 *)Hello2_efi, 0x30, NULL);
+  DumpBuffer ( (UINT8 *)NewHandle, 0x50, NULL);
+  //
+  // now start the image, passing up exit data if the caller requested it
+  //
+  Status = gBS->StartImage(
+               NewHandle,
+               &ExitDataSizePtr,
+               NULL
+        );
+  if (EFI_ERROR(Status)) {
+          Print(L"\nError during StartImage [%r]\n",Status);
+          return 0;
+  }   
+  
+  // Status = gBS->StartImage(
+  //              NewHandle,
+  //              &ExitDataSizePtr,
+  //              NULL
+  //       );
+  // if (EFI_ERROR(Status)) {
+  //         Print(L"\nError during StartImage [%r]\n",Status);
+  //         return 0;
+  // }  
+  
+  Print(L"---------------------\n");  
+  Status = gBS->UnloadImage(NewHandle);    
+  DumpBuffer ( (UINT8 *)NewHandle, 0x50, NULL);
 
-  // p = TempData;
-  // p += sizeof (UINT32);
-  // p += sizeof (UINT16);
-  // DescriptionLength = StrSize ((PCHAR16)p);
-  // Print(L"DescriptionLength = %d\n", DescriptionLength);
-  // Option->Description = AllocateCopyPool (DescriptionLength, p);
-  // Print(L"Option->Description = %s\n", Option->Description);
-
+  if (EFI_ERROR(Status)) {
+          Print(L"Un-Load image Error! %r\n",Status);
+          return 0;
+  }        
+  
   return EFI_SUCCESS;
 }
