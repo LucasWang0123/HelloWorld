@@ -217,7 +217,7 @@ UefiMain (
   TempData = NULL;
 
   Status = gRT->GetVariable (
-                  L"Boot0011",
+                  L"Boot0010",
                   (EFI_GUID *) &gEfiGlobalVariableGuid,
                   &TempAttributes,      // OUT Attributes.
                   &TempDataSize,        // IN OUT DataSize.
@@ -232,7 +232,7 @@ UefiMain (
     Print(L"TempData = 0x%x\n", TempData);
     
     Status = gRT->GetVariable (
-                  L"Boot0011",
+                  L"Boot0010",
                   (EFI_GUID *) &gEfiGlobalVariableGuid,
                   &TempAttributes,      // OUT Attributes.
                   &TempDataSize,        // IN OUT DataSize.
